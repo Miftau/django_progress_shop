@@ -9,6 +9,9 @@ class Category(models.Model):
     def __str__(self) -> str:
         return f"{self.name} \n {self.description}"
     
+    class Meta:
+        verbose_name_plural = 'categories'
+    
 
 # Customer details model    
 
