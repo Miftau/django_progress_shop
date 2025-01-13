@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Category, Customer, Product, Order
+from .models import Category, Customer, Product, Order, Review
 
 # Function for duplicating selected objects in list view
 def duplicate_objects(modeladmin, request, queryset):
@@ -76,8 +76,13 @@ class CustomerAdmin(BaseAdmin):
 
 @admin.register(Product)
 class ProductAdmin(BaseAdmin):
-    list_display = ['name', 'description', 'price', 'Category']  # Fields from the Product model
+    list_display = ['name', 'description', 'price', 'Category', 'average_rating']  # Fields from the Product model
     list_filter = ['Category']  # Optional: Add filtering by category
+    
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'customer', 'rating', 'created_at')
 
 @admin.register(Order)
 class OrderAdmin(BaseAdmin):
