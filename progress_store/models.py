@@ -35,6 +35,19 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=3, default=0)
     Category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     image = models.ImageField(upload_to='upload/product')
+    is_sale = models.BooleanField(default=False)
+    sale_price = models.DecimalField(default=0, decimal_places=2, max_digits=12)
+    average_rating = models.FloatField(default=0.0) 
+    
+
+# Review model
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
+    rating = models.IntegerField(default=1)  # Star rating (1 to 5)
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
     
 
 # Customer Order Model
