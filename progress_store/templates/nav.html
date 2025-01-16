@@ -16,6 +16,13 @@
                                 <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
                             </ul>
                         </li>
+
+                        {% if user.authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Sign Out</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Sign In</a></li>
+                        {% endif %}
+                        
                     </ul>
                     <form class="d-flex">
                         <button class="btn btn-outline-dark" type="submit">
