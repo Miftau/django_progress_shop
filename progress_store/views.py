@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
@@ -13,19 +14,40 @@ def home(request):
     return render(request, 'home.html', {'products':products})
 
 def login_user(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, ("You are welcome to PROGRESS STORE"))
-            return redirect('home')
-        else:
-            messages.success(request, ("Invalid Login, please check again or retrieve password"))
-            return redirect('login')
-    else:
-        return render(request, 'login.html', {})
+    try:
+        if request.method == 'POST':
+            print(f"Request method: {request.method}")
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            print(f"Username: {username}, Password: {password}")
+
+            if not username or not password:
+                raise ValidationError("Username and password are required.")
+
+            user = authenticate(request, username=username, password=password)
+            print(f"Authenticated user: {user}")
+            if user is not None:
+                login(request, user)
+                # Redirect to the admin dashboard if the user is an admin
+                if user.is_staff:
+                    return redirect('/admin/')
+                else:
+                    return redirect('/')  # Redirect to the homepage for non-admin users
+            else:
+                # Handle invalid credentials
+                print("Invalid credentials")
+                return render(request, 'login.html', {'error': 'Invalid username or password'})
+
+        # For GET requests, render the login page
+        print("Rendering login page")
+        return render(request, 'login.html')
+
+    except ValidationError as ve:
+        # Handle form validation errors
+        return render(request, 'login.html', {'error': str(ve)})
+    except Exception as e:
+        # Catch-all for unexpected exceptions
+        return render(request, 'login.html', {'error': 'An unexpected error occurred. Please try again.'})
 
 def logout_user(request):
     logout(request)
