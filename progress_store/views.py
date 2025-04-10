@@ -5,13 +5,12 @@ from django.db.models import Avg
 from django.urls import reverse
 from .models import Product, Review
 from .forms import ReviewForm
-from progress_store import models
 from django.contrib import messages
 
 # Create your views here.
 def home(request):
     products = Product.objects.annotate(avg_rating=Avg('reviews__rating'))
-    return render(request, 'home.html', {'products':products})
+    return render(request, 'home.html', {'products': products})
 
 def login_user(request):
     try:
@@ -28,31 +27,26 @@ def login_user(request):
             print(f"Authenticated user: {user}")
             if user is not None:
                 login(request, user)
-                # Redirect to the admin dashboard if the user is an admin
-                if user.is_staff:
-                    return redirect('/admin/')
-                else:
-                    return redirect('/')  # Redirect to the homepage for non-admin users
+                return redirect('/admin/') if user.is_staff else redirect('/')
             else:
-                # Handle invalid credentials
                 print("Invalid credentials")
                 return render(request, 'login.html', {'error': 'Invalid username or password'})
 
-        # For GET requests, render the login page
         print("Rendering login page")
         return render(request, 'login.html')
 
     except ValidationError as ve:
-        # Handle form validation errors
         return render(request, 'login.html', {'error': str(ve)})
-    except Exception as e:
-        # Catch-all for unexpected exceptions
+    except Exception:
         return render(request, 'login.html', {'error': 'An unexpected error occurred. Please try again.'})
 
 def logout_user(request):
     logout(request)
     messages.success(request, ("Thanks for Shopping with us..."))
-    return redirect('home') 
+    return redirect('home')
+
+def register_user(request):
+    return render(request, 'register.html', {})  
 
 def about(request):
     home_url = reverse('home')  
@@ -83,14 +77,19 @@ def submit_review(request, product_id):
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
-            review = form.save(commit=False)
-            review.product = product
-            review.customer = request.user.customer  # Assuming logged-in users are linked to customers
-            review.save()
-            # Update product's average rating
-            product.average_rating = product.reviews.aggregate(models.Avg('rating'))['rating__avg']
-            product.save()
-            return redirect('product_detail', product_id=product.id)
+            return _extracted_from_submit_review_6(form, product, request)
     else:
         form = ReviewForm()
     return render(request, 'submit_review.html', {'form': form, 'product': product})
+
+
+# TODO Rename this here and in `submit_review`
+def _extracted_from_submit_review_6(form, product, request):
+    review = form.save(commit=False)
+    review.product = product
+    review.customer = request.user.customer  # Assuming logged-in users are linked to customers
+    review.save()
+    # Update product's average rating
+    product.average_rating = product.reviews.aggregate(Avg('rating'))['rating__avg']
+    product.save()
+    return redirect('product_detail', product_id=product.id)
