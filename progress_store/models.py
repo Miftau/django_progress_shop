@@ -1,6 +1,6 @@
 from django.db import models
 import datetime
-
+from django.contrib.auth.models import User
 # categories model
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -26,7 +26,16 @@ class Customer(models.Model):
     
     def __str__(self) -> str:
         return f"{self.firstname} {self.lastname}"
-    
+
+class CustomerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to='profile_pics/', default='default.jpg')
+    phone = models.CharField(max_length=15, blank=True)
+    address = models.TextField(blank=True)
+    email_verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
 
 # Products MOdel
 class Product(models.Model):

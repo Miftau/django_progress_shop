@@ -3,22 +3,12 @@ from django.urls import path
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Category, Customer, Product, Order, Review
+from .models import CustomerProfile
 
-# Function for duplicating selected objects in list view
-def duplicate_objects(modeladmin, request, queryset):
-    for obj in queryset:
-        obj.pk = None  # Reset the primary key to create a new instance
-        obj.save()
-    model_name = queryset.model._meta.verbose_name_plural.title()
-    messages.success(request, f"Selected {model_name} were duplicated successfully.")
 
-duplicate_objects.short_description = "Duplicate selected objects"
-
-from django.contrib import admin
-from django.urls import path
-from django.shortcuts import redirect
-from django.contrib import messages
-from .models import Category, Customer, Product, Order
+@admin.register(CustomerProfile)
+class CustomerProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'email_verified']
 
 # Function for duplicating selected objects in the list view
 def duplicate_objects(modeladmin, request, queryset):
