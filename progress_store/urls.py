@@ -11,4 +11,5 @@ urlpatterns = [
     path('product/<int:product_id>/review/', views.submit_review, name='submit_review'),
     path('register/', views.register_user, name='register'),
     path('verify-email/<uidb64>/<token>/', views.verify_email, name='verify_email'),
+    path('category/<str:cat_name>', views.home, name='category'),
 ]

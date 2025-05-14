@@ -20,10 +20,14 @@
                         <div class="col-md-6">
                             <div class="small mb-1">SKU: BST-498</div>
                             <h1 class="display-5 fw-bolder">{{ product.name }}</h1>
+                            {% if product.is_sale %}
                             <div class="fs-5 mb-5">
                                 <span class="text-decoration-line-through">${{ product.price }}</span>
                                 <span>{{ product.sale_price }}</span>
                             </div>
+                            {% else %}
+                                <span>${{ product.price }}</span>
+                            {% endif %}
                             <p class="lead">{{ product.description }}</p>
                             <div class="d-flex">
                                 <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />

@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
 from django.urls import reverse
-from .models import Product, Review
+from .models import Product, Review, Category
 from .forms import ReviewForm
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -19,6 +19,18 @@ from .forms import CustomerRegistrationForm
 def home(request):
     products = Product.objects.annotate(avg_rating=Avg('reviews__rating'))
     return render(request, 'home.html', {'products': products})
+
+def category(request, cat_name):
+    # logic to replace spaces with hypens
+    cat_name = cat_name.replace('-', ' ')
+    # Passing category to the url for view from the model
+    try:
+        category = Category.objects.get(name=cat_name)
+        products = Product.objects.filter(category=category)
+        return render(request, 'category.html', {'products': products, 'category': category})
+    except:
+        messages.success(request, 'The category is empty or it does not exist')
+        return redirect('home')
 
 def login_user(request):
     try:
@@ -78,14 +90,14 @@ def _extracted_from_register_user_5(form, request):
         f"/verify-email/{uid}/{token}/"
     )
 
-    message = render_to_string('emails/verify_email.html', {
+    message = render_to_string('verify_email.html', {
         'user': user,
         'verification_link': verification_link
     })
 
     send_mail(
         subject='Verify Your Email - Progress Store',
-        message='',
+        message='This is an HTML email',
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
         html_message=message
