@@ -30,7 +30,7 @@
                             {% endif %}
                             <p class="lead">{{ product.description }}</p>
                             <div class="d-flex">
-                                <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
+                                <input class="form-control text-center me-3" id="inputQuantity" type="button" value="{{ product.id }}" style="max-width: 3rem" />
                                 <button class="btn btn-outline-dark flex-shrink-0" type="button">
                                     <i class="bi-cart-fill me-1"></i>
                                     Add to cart
@@ -64,3 +64,26 @@
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Submit Review</button>
 </form>
+
+<script>
+    $(document).on('click', '#inputQuantity', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+                product_id: $('#inputQuantity').val(),
+                csrfmiddewaretoken: '{{ csrf_token }}',
+                action: post
+            },
+
+            success: function(json){
+                console.log(json)
+            },
+
+            error: function(xhr, errmsg, err){
+                
+            }
+        });
+    })
+</script>

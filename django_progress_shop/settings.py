@@ -3,6 +3,7 @@
 from pathlib import Path
 import os
 from django.conf.global_settings import EMAIL_USE_SSL
+from decouple import Config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'progress_store',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +57,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'cart.context_processors.cart',
             ],
         },
     },
@@ -130,12 +133,12 @@ LOGIN_REDIRECT_URL = '/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email Verification settings
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.pimconcepts.com.ng'
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'cs@pimconcepts.com.ng'
-EMAIL_HOST_PASSWORD = 'Baba##thunday99'  # Use App Password, not Gmail password
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST = Config('EMAIL_HOST')
+EMAIL_PORT = Config('EMAIL_PORT')
+EMAIL_USE_TLS = Config('EMAIL_USE_TLS')
+MAIL_USE_SSL = Config('EMAIL_USE_SSL')
+EMAIL_HOST_USER = Config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = Config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = Config('DEFAULT_FROM_EMAIL')
