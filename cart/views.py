@@ -16,10 +16,15 @@ def cart_add(request):
         product_id = int(request.POST.get('product_id'))
         # Fetch product from DB
         product = get_object_or_404(Product, id=product_id)
+        
+        # Get Cart Quantity
+        cart_quantity = cart.__len__()
 
         # Add product to session
         cart.add(product=product)
-        return JsonResponse({'product_name': product.name})
+        #return JsonResponse({'product_name': product.name})
+        return JsonResponse({'qty': cart_quantity})
+
 
 
 def cart_delete(request):

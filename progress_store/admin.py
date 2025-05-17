@@ -58,7 +58,7 @@ class BaseAdmin(admin.ModelAdmin):
 # Register models with duplication features
 @admin.register(Category)
 class CategoryAdmin(BaseAdmin):
-    list_display = ['name', 'description']  # Use fields defined in the Category model
+    list_display = ['name',]  # Use fields defined in the Category model
 
 @admin.register(Customer)
 class CustomerAdmin(BaseAdmin):

@@ -14,6 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from .forms import CustomerRegistrationForm
+from django.db.models import Q
 
 # Create your views here.
 def home(request):
@@ -21,15 +22,13 @@ def home(request):
     return render(request, 'home.html', {'products': products})
 
 def category(request, cat_name):
-    # logic to replace spaces with hypens
     cat_name = cat_name.replace('-', ' ')
-    # Passing category to the url for view from the model
     try:
-        category = Category.objects.get(name=cat_name)
+        category = Category.objects.get(name__iexact=cat_name)
         products = Product.objects.filter(category=category)
         return render(request, 'category.html', {'products': products, 'category': category})
-    except:
-        messages.success(request, 'The category is empty or it does not exist')
+    except Category.DoesNotExist:
+        messages.error(request, 'The category is empty or does not exist')
         return redirect('home')
 
 def login_user(request):

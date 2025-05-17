@@ -4,10 +4,11 @@ from django.contrib.auth.models import User
 # categories model
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=10000, default="", blank=True, null=True)
+ 
+
     
     def __str__(self) -> str:
-        return f"{self.name} \n {self.description}"
+        return self.name
     
     #@Dave Rob 2011 discovery
     class Meta:
